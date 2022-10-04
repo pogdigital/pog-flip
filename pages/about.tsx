@@ -5,7 +5,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-screen">
       <Head>
-        <title>nextjs-starter</title>
+        <title>About | Pog Flip</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

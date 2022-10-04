@@ -1,20 +1,10 @@
-## nextjs-starter
+## pog-flip
 
-![React tests](https://github.com/briangershon/nextjs-starter/actions/workflows/continuous-integration.yaml/badge.svg)
+![React tests](https://github.com/pogdigital/pog-flip/actions/workflows/continuous-integration.yaml/badge.svg)
 
-Starter template for Next.js, with TypeScript, tailwindcss and daisyUI.
+An upcoming Pog game.
 
-![home page screenshot](nextjs-starter.png)
-
-## Features
-
-- Start with minimal [Next.js](https://nextjs.org/) app (using `npm`) via `npx create-next-app nextjs-starter --use-npm --ts` and simplify content
-- Add [tailwindcss](https://tailwindcss.com/) and [daisyUI](https://daisyui.com)
-- Add navigation, site layout and two pages
-- Add Jest, React Testing Library, GitHub action to run tests, README badge, sample test
-- Add Prettier config
-- Add health check endpoint (`/api/health`)
-- Add placeholder `favicon.ico`
+**This game is in early development and not yet released.**
 
 ## Run locally
 

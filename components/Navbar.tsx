@@ -15,7 +15,7 @@ export function Navbar() {
           <li>
             <Link href="/">
               <a className={currentRoute === '/' ? 'active' : undefined}>
-                Home
+                Play
               </a>
             </Link>
           </li>

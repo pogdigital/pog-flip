@@ -10,12 +10,12 @@ module.exports = {
   plugins: [require('daisyui')],
   daisyui: {
     styled: true,
-    themes: ['aqua'],
+    themes: ['wireframe'],
     base: true,
     utils: true,
     logs: true,
     rtl: false,
     prefix: '',
-    darkTheme: 'aqua',
+    darkTheme: 'wireframe',
   },
 };

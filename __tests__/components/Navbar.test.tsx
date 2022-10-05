@@ -22,12 +22,12 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Navbar', () => {
-  it('renders Home link', () => {
+  it('renders Play link', () => {
     render(<Navbar />);
 
     const el = screen.getAllByRole('link');
 
-    expect(el[0]).toHaveTextContent('Home');
+    expect(el[0]).toHaveTextContent('Play');
     expect(el[0]).toHaveAttribute('href', '/');
   });
 

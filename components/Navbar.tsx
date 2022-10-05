@@ -19,13 +19,13 @@ export function Navbar() {
               </a>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link href="/about">
               <a className={currentRoute === '/about' ? 'active' : undefined}>
                 About
               </a>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

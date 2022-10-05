@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import { WalletMenu } from '@/components/WalletMenu';
 
 const Home: NextPage = () => {
   return (
@@ -37,6 +38,10 @@ const Home: NextPage = () => {
           </div>
           <div className="flex-grow border-2 text-center text-2xl p-8">
             <div>Player</div>
+            <div>
+              <WalletMenu onUseWalletClick={() => {}} />
+            </div>
+
             <div className="mt-8">
               <Image
                 src="https://arweave.net/KPtfLSz8u5cwvkUt9bYGSuErJFYuZz84cWfZYZ0Nfu4?ext=png"

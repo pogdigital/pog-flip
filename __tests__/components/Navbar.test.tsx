@@ -31,12 +31,12 @@ describe('Navbar', () => {
     expect(el[0]).toHaveAttribute('href', '/');
   });
 
-  it('renders About link', () => {
-    render(<Navbar />);
+  // it('renders About link', () => {
+  //   render(<Navbar />);
 
-    const el = screen.getAllByRole('link');
+  //   const el = screen.getAllByRole('link');
 
-    expect(el[1]).toHaveTextContent('About');
-    expect(el[1]).toHaveAttribute('href', '/about');
-  });
+  //   expect(el[1]).toHaveTextContent('About');
+  //   expect(el[1]).toHaveAttribute('href', '/about');
+  // });
 });

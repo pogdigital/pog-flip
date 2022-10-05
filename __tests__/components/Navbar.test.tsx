@@ -2,6 +2,12 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { Navbar } from '@/components/Navbar';
+jest.mock('../../components/WalletMenu', () => ({
+  __esModule: true,
+  WalletMenu: () => {
+    return <button>Wallet</button>;
+  },
+}));
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -22,21 +28,22 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Navbar', () => {
-  it('renders Play link', () => {
+  it('renders WalletMenu link', () => {
     render(<Navbar />);
-
-    const el = screen.getAllByRole('link');
-
-    expect(el[0]).toHaveTextContent('Play');
-    expect(el[0]).toHaveAttribute('href', '/');
+    const el = screen.getAllByRole('button');
+    expect(el[0]).toHaveTextContent('Wallet');
   });
 
-  it('renders About link', () => {
-    render(<Navbar />);
-
-    const el = screen.getAllByRole('link');
-
-    expect(el[1]).toHaveTextContent('About');
-    expect(el[1]).toHaveAttribute('href', '/about');
-  });
+  // it('renders Play link', () => {
+  //   render(<Navbar />);
+  //   const el = screen.getAllByRole('link');
+  //   expect(el[0]).toHaveTextContent('Play');
+  //   expect(el[0]).toHaveAttribute('href', '/');
+  // });
+  // it('renders About link', () => {
+  //   render(<Navbar />);
+  //   const el = screen.getAllByRole('link');
+  //   expect(el[1]).toHaveTextContent('About');
+  //   expect(el[1]).toHaveAttribute('href', '/about');
+  // });
 });

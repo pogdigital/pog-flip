@@ -37,6 +37,7 @@ const Home: NextPage = () => {
           </div>
           <div className="flex-grow border-2 text-center text-2xl p-8">
             <div>Player</div>
+
             <div className="mt-8">
               <Image
                 src="https://arweave.net/KPtfLSz8u5cwvkUt9bYGSuErJFYuZz84cWfZYZ0Nfu4?ext=png"

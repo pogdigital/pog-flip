@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { WalletMenu } from '@/components/WalletMenu';
 
 export function Navbar() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export function Navbar() {
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal p-0">
-          <li>
+          {/* <li>
             <Link href="/">
               <a className={currentRoute === '/' ? 'active' : undefined}>
                 Play
@@ -25,6 +26,9 @@ export function Navbar() {
                 About
               </a>
             </Link>
+          </li> */}
+          <li>
+            <WalletMenu onUseWalletClick={() => {}} />
           </li>
         </ul>
       </div>

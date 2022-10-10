@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-screen">
       <Head>
-        <title>Play | Pog Flip</title>
+        <title>Play Pog Flip</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -121,7 +121,12 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        {publicKey && <PickPogFromWallet pogs={nfts} />}
+        {publicKey && (
+          <>
+            <h1 className="mt-8 text-center text-3xl">NFTs in Your Wallet</h1>
+            <PickPogFromWallet pogs={nfts} />
+          </>
+        )}
       </main>
     </div>
   );

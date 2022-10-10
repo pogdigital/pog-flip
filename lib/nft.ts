@@ -13,13 +13,18 @@ interface NFT {
   };
 }
 
+interface NFTMetadata {
+  name: string;
+  imageUrl: string;
+}
+
 interface PogNFT {
   name: string;
   imageUrl: string;
   mintAddress: string;
 }
 
-async function fetchNFTMetadata(nft: NFT): Promise<PogNFT> {
+async function fetchNFTMetadata(nft: NFT): Promise<NFTMetadata> {
   const uri = nft.data.uri;
   const metadata = await axios({
     url: uri,
@@ -29,7 +34,6 @@ async function fetchNFTMetadata(nft: NFT): Promise<PogNFT> {
   return {
     name: metadata.data.name,
     imageUrl: metadata.data.image,
-    mintAddress: '',
   };
 }
 
@@ -47,9 +51,13 @@ async function getNFTs({
 
     const pogs: PogNFT[] = [];
     for (let i = 0; i < nftArray.length; i++) {
-      pogs.push(await fetchNFTMetadata(nftArray[i]));
+      const { name, imageUrl } = await fetchNFTMetadata(nftArray[i]);
+      pogs.push({
+        name,
+        imageUrl,
+        mintAddress: nftArray[i].mint,
+      } as PogNFT);
     }
-
     return pogs;
   } catch (e) {
     if (e instanceof Error) {

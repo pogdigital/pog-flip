@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 import { useWallet, Wallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 
-type Props = {
-  onUseWalletClick: () => void;
-};
+import { PublicKey } from '@solana/web3.js';
+
+interface Props {
+  onWalletConnect: ({ publicKey }: { publicKey: PublicKey }) => void;
+  onWalletDisconnect: () => void;
+}
 
 function shortenPublicKey(wallet: Wallet | null): string {
   if (wallet?.adapter.publicKey) {
@@ -14,7 +17,7 @@ function shortenPublicKey(wallet: Wallet | null): string {
   return '';
 }
 
-export const WalletMenu = ({ onUseWalletClick }: Props) => {
+export const WalletMenu = ({ onWalletConnect, onWalletDisconnect }: Props) => {
   const [isConnected, setIsConnected] = useState(false);
   const [pk, setPk] = useState('');
   const [installedWallets, setInstalledWallets] = useState<Wallet[]>([]);
@@ -81,8 +84,8 @@ export const WalletMenu = ({ onUseWalletClick }: Props) => {
                     setIsConnected(wallet.adapter.connected);
                     if (wallet.adapter.publicKey != null) {
                       setPk(shortenPublicKey(wallet));
+                      onWalletConnect({ publicKey: wallet.adapter.publicKey });
                     }
-                    onUseWalletClick();
                   } catch (e) {
                     let err = e as Error;
                     console.log('wallet not found');
@@ -101,6 +104,7 @@ export const WalletMenu = ({ onUseWalletClick }: Props) => {
               await disconnect();
               setIsConnected(false);
               setPk('');
+              onWalletDisconnect();
             }}
           >
             Disconnect

@@ -13,15 +13,21 @@ const Home: NextPage = () => {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
   const [nfts, setNfts] = useState<PogNFT[]>([]);
+  const [loadingNFTs, setLoadingNFTs] = useState<boolean>(false);
 
   useEffect(() => {
     async function retrieveNFTs() {
       if (publicKey) {
+        setLoadingNFTs(true);
         setNfts(await getNFTs({ publicKey, endpoint }));
       }
     }
     retrieveNFTs();
   }, [publicKey, endpoint]);
+
+  useEffect(() => {
+    setLoadingNFTs(false);
+  }, [nfts]);
 
   return (
     <div className="flex h-screen">
@@ -122,10 +128,18 @@ const Home: NextPage = () => {
           </div>
         </div>
         {publicKey && (
-          <>
+          <div>
             <h1 className="mt-8 text-center text-3xl">NFTs in Your Wallet</h1>
-            <PickPogFromWallet pogs={nfts} />
-          </>
+            {loadingNFTs ? (
+              <progress className="progress w-full" />
+            ) : nfts.length > 0 ? (
+              <PickPogFromWallet pogs={nfts} />
+            ) : (
+              <div className="text-center mt-4">
+                No Pogs to Play. Please add some Pogs to your wallet.
+              </div>
+            )}
+          </div>
         )}
       </main>
     </div>

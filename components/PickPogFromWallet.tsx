@@ -2,7 +2,7 @@ import { PogNFT } from '@/lib/nft';
 
 export function PickPogFromWallet({ pogs }: { pogs: PogNFT[] }) {
   if (pogs.length === 0) {
-    return <div>Please add some Pogs to your wallet to play.</div>;
+    return null;
   }
   return (
     <div className="flex flex-row">

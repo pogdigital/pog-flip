@@ -54,7 +54,7 @@ const Home: NextPage = () => {
             <div className="flex flex-col h-full">
               <div className="flex-grow">&nbsp;</div>
               <div>
-                <button className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10">
+                <button disabled className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10">
                   FLIP
                 </button>
               </div>

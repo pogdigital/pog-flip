@@ -5,7 +5,7 @@ export function PickPogFromWallet({ pogs }: { pogs: PogNFT[] }) {
     return null;
   }
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row flex-wrap">
       {pogs.map((pog) => {
         return (
           <div

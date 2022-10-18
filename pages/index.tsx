@@ -22,10 +22,28 @@ const Home: NextPage = () => {
     FlipGameState.AwaitPlayerPog
   );
   const [playerPog, setPlayerPog] = useState<PogNFT | null>(null);
+  const [winningPog, setWinningPog] = useState<string | null>(null);
 
   function onSelectPog(pog: PogNFT): void {
     setPlayerPog(pog);
     setGameState(FlipGameState.PogPicked);
+  }
+
+  async function onPlayGame() {
+    if (playerPog?.mintAddress) {
+      setGameState(FlipGameState.GameStarted);
+      const result = await game.play({
+        playerPogMintAddress: playerPog.mintAddress,
+      });
+      setWinningPog(result.winningPogMintAddress);
+      setGameState(FlipGameState.GameFinished);
+    }
+  }
+
+  async function onRestartGame() {
+    setGameState(FlipGameState.AwaitPlayerPog);
+    setPlayerPog(null);
+    setWinningPog(null);
   }
 
   useEffect(() => {
@@ -100,7 +118,13 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <Game gameState={gameState} playerPog={playerPog} />
+        <Game
+          gameState={gameState}
+          playerPog={playerPog}
+          winningPog={winningPog}
+          onPlayGame={onPlayGame}
+          onRestartGame={onRestartGame}
+        />
 
         {publicKey && (
           <div>

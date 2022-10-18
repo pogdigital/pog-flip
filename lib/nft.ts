@@ -5,6 +5,7 @@ import {
 } from '@nfteyez/sol-rayz';
 
 import { WalletAndNetwork } from '@/types/index';
+import { PogMintAddress } from './flipgame';
 
 interface NFT {
   data: {
@@ -21,7 +22,7 @@ interface NFTMetadata {
 interface PogNFT {
   name: string;
   imageUrl: string;
-  mintAddress: string;
+  mintAddress: PogMintAddress;
 }
 
 async function fetchNFTMetadata(nft: NFT): Promise<NFTMetadata> {
@@ -52,6 +53,7 @@ async function getNFTs({
     const pogs: PogNFT[] = [];
     for (let i = 0; i < nftArray.length; i++) {
       const { name, imageUrl } = await fetchNFTMetadata(nftArray[i]);
+
       pogs.push({
         name,
         imageUrl,

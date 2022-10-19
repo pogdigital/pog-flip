@@ -1,6 +1,7 @@
 import { FlipGameState, PogMintAddress } from '@/lib/flipgame';
 import { PogView } from './PogView';
 import { PogNFT } from '@/lib/nft';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 export function Game({
   gameState,
@@ -15,6 +16,9 @@ export function Game({
   onPlayGame: () => {};
   onRestartGame: () => {};
 }) {
+  const { connection } = useConnection();
+  const { publicKey, signTransaction, sendTransaction, wallet } = useWallet();
+
   return (
     <div className="flex flex-col w-full sm:flex-row">
       <div className="border-2 text-center text-2xl p-8 bg-blue-500 rounded-2xl flex items-center">

@@ -1,20 +1,29 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { clusterApiUrl, PublicKey } from '@solana/web3.js';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import {
+  WalletAdapterNetwork,
+  WalletNotConnectedError,
+} from '@solana/wallet-adapter-base';
 import { PickPogFromWallet } from '@/components/PickPogFromWallet';
 import { useMemo, useEffect, useState } from 'react';
 import { PogNFT, getNFTs } from '@/lib/nft';
-import { WalletMenu } from '@/components/WalletMenu';
 import { Game } from '@/components/Game';
 import { FlipGame, FlipGameState } from '@/lib/flipgame';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import {
+  WalletMultiButton,
+  WalletDisconnectButton,
+} from '@solana/wallet-adapter-react-ui';
 
 const game = new FlipGame();
 
 const Home: NextPage = () => {
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
+  const { connection } = useConnection();
+  const { publicKey, signTransaction, sendTransaction, wallet } = useWallet();
+
   const [nfts, setNfts] = useState<PogNFT[]>([]);
   const [loadingNFTs, setLoadingNFTs] = useState<boolean>(false);
 
@@ -29,10 +38,23 @@ const Home: NextPage = () => {
     setGameState(FlipGameState.PogPicked);
   }
 
+  useEffect(() => {
+    if (!wallet) {
+      setNfts([]);
+      setPlayerPog(null);
+      setGameState(FlipGameState.AwaitPlayerPog);
+    }
+  }, [wallet]);
+
   async function onPlayGame() {
-    if (playerPog?.mintAddress) {
+    if (!publicKey || !signTransaction) throw new WalletNotConnectedError();
+    if (playerPog?.mintAddress && publicKey) {
       setGameState(FlipGameState.GameStarted);
       const result = await game.play({
+        connection,
+        publicKey,
+        signTransaction,
+        sendTransaction,
         playerPogMintAddress: playerPog.mintAddress,
       });
       setWinningPog(result.winningPogMintAddress);
@@ -69,18 +91,9 @@ const Home: NextPage = () => {
 
       <main className="w-screen h-screen p-4">
         <div className="flex justify-center align-items mb-4">
-          <div>
-            <WalletMenu
-              onWalletConnect={(publicKey) => {
-                setPublicKey(publicKey.publicKey);
-              }}
-              onWalletDisconnect={() => {
-                setPublicKey(null);
-                setNfts([]);
-                setPlayerPog(null);
-                setGameState(FlipGameState.AwaitPlayerPog);
-              }}
-            />
+          <div className="rounded bg-gray-500">
+            <WalletMultiButton />
+            <WalletDisconnectButton />
           </div>
           <div>
             <label htmlFor="my-modal-3" className="btn modal-button m-1">

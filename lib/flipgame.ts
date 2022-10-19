@@ -76,13 +76,6 @@ export class FlipGame {
     signTransaction,
     playerPogMintAddress,
   }: PogFlipParams): Promise<void> {
-    console.log({
-      connection,
-      publicKey,
-      sendTransaction,
-      signTransaction,
-      playerPogMintAddress,
-    });
     if (playerPogMintAddress) {
       const mintPublicKey = new web3.PublicKey(playerPogMintAddress);
       const to = new web3.PublicKey(POGFLIP_ESCROW);

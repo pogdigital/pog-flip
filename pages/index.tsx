@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { clusterApiUrl, PublicKey } from '@solana/web3.js';
+import { clusterApiUrl } from '@solana/web3.js';
 import {
   WalletAdapterNetwork,
   WalletNotConnectedError,

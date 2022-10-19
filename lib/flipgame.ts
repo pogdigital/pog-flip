@@ -11,7 +11,6 @@ const POGFLIP_ESCROW = '2HfWgU9nkwdBLFJ7s1UW4PBwgkgB16h7boXyGKNBZypB';
 import * as web3 from '@solana/web3.js';
 
 import type {
-  SignerWalletAdapterProps,
   WalletAdapterProps,
 } from '@solana/wallet-adapter-base';
 
@@ -34,7 +33,6 @@ export interface PogFlipParams {
   connection: web3.Connection;
   publicKey: web3.PublicKey;
   sendTransaction: WalletAdapterProps['sendTransaction'];
-  signTransaction: SignerWalletAdapterProps['signTransaction'] | undefined;
   playerPogMintAddress: PogMintAddress;
 }
 
@@ -48,14 +46,12 @@ export class FlipGame {
     connection,
     publicKey,
     sendTransaction,
-    signTransaction,
     playerPogMintAddress,
   }: PogFlipParams): Promise<PogFlipResults> {
     await this.playerPogToEscrow({
       connection,
       publicKey,
       sendTransaction,
-      signTransaction,
       playerPogMintAddress,
     });
 
@@ -73,7 +69,6 @@ export class FlipGame {
     connection,
     publicKey,
     sendTransaction,
-    signTransaction,
     playerPogMintAddress,
   }: PogFlipParams): Promise<void> {
     if (playerPogMintAddress) {
@@ -93,7 +88,7 @@ export class FlipGame {
         toTokenAccount.toBase58()
       );
 
-      let txCreate = new web3.Transaction().add(
+      let tx = new web3.Transaction().add(
         createAssociatedTokenAccountInstruction(
           publicKey,
           toTokenAccount,
@@ -102,12 +97,7 @@ export class FlipGame {
         )
       );
 
-      const createResult = await sendTransaction(txCreate, connection, {
-        preflightCommitment: 'confirmed',
-      });
-      console.log('result of create associated account', createResult);
-
-      const txTransfer = new web3.Transaction().add(
+      tx.add(
         createTransferCheckedInstruction(
           fromTokenAccount,
           mintPublicKey,
@@ -118,10 +108,13 @@ export class FlipGame {
         )
       );
 
-      const result = await sendTransaction(txTransfer, connection, {
+      const result = await sendTransaction(tx, connection, {
         preflightCommitment: 'confirmed',
       });
-      console.log('result of sendTransaction', result);
+      console.log(
+        'result of createAssociatedTokenAccountInstruction and createTransferCheckedInstruction transaction',
+        result
+      );
     }
   }
 }

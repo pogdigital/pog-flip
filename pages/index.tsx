@@ -22,7 +22,7 @@ const Home: NextPage = () => {
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const { connection } = useConnection();
-  const { publicKey, signTransaction, sendTransaction, wallet } = useWallet();
+  const { publicKey, sendTransaction, wallet } = useWallet();
 
   const [nfts, setNfts] = useState<PogNFT[]>([]);
   const [loadingNFTs, setLoadingNFTs] = useState<boolean>(false);
@@ -47,13 +47,12 @@ const Home: NextPage = () => {
   }, [wallet]);
 
   async function onPlayGame() {
-    if (!publicKey || !signTransaction) throw new WalletNotConnectedError();
+    if (!publicKey || !sendTransaction) throw new WalletNotConnectedError();
     if (playerPog?.mintAddress && publicKey) {
       setGameState(FlipGameState.GameStarted);
       const result = await game.play({
         connection,
         publicKey,
-        signTransaction,
         sendTransaction,
         playerPogMintAddress: playerPog.mintAddress,
       });

@@ -10,9 +10,7 @@ const POGFLIP_ESCROW = '2HfWgU9nkwdBLFJ7s1UW4PBwgkgB16h7boXyGKNBZypB';
 
 import * as web3 from '@solana/web3.js';
 
-import type {
-  WalletAdapterProps,
-} from '@solana/wallet-adapter-base';
+import type { WalletAdapterProps } from '@solana/wallet-adapter-base';
 
 import {
   getAssociatedTokenAddress,
@@ -108,13 +106,15 @@ export class FlipGame {
         )
       );
 
-      const result = await sendTransaction(tx, connection, {
-        preflightCommitment: 'confirmed',
-      });
-      console.log(
-        'result of createAssociatedTokenAccountInstruction and createTransferCheckedInstruction transaction',
-        result
-      );
+      // disabled until pogflip API is ready
+
+      // const result = await sendTransaction(tx, connection, {
+      //   preflightCommitment: 'confirmed',
+      // });
+      // console.log(
+      //   'result of createAssociatedTokenAccountInstruction and createTransferCheckedInstruction transaction',
+      //   result
+      // );
     }
   }
 }

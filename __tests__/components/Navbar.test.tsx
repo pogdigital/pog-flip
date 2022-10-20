@@ -2,12 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { Navbar } from '@/components/Navbar';
-jest.mock('../../components/WalletMenu', () => ({
-  __esModule: true,
-  WalletMenu: () => {
-    return <button>Wallet</button>;
-  },
-}));
 
 jest.mock('next/router', () => ({
   useRouter() {

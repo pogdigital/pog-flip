@@ -3,7 +3,7 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from '@solana/wallet-adapter-react';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+import * as w from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { useMemo } from 'react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
@@ -27,10 +27,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   // of wallets that your users connect to will be loaded
   const wallets = useMemo(
     () => [
-      new PhantomWalletAdapter(),
-      // new GlowWalletAdapter(),
-      // new SlopeWalletAdapter(),
-      // new TorusWalletAdapter(),
+      new w.PhantomWalletAdapter(),
+      new w.GlowWalletAdapter(),
+      new w.SlopeWalletAdapter(),
+      new w.TorusWalletAdapter(),
+      new w.LedgerWalletAdapter(),
     ],
     [network]
   );

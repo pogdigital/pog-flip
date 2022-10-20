@@ -15,11 +15,11 @@ export function PogView({
   onSelectPog,
 }: PogViewParams) {
   return (
-    <div className="card w-96 bg-base-100 shadow-xl" key={mintAddress}>
+    <div className="card md:w-60 bg-base-100 shadow-lg" key={mintAddress}>
       <figure className="px-10 pt-10">
         <img src={imageUrl} alt={name} className="rounded-xl" />
       </figure>
-      <div className="card-body items-center text-center">
+      <div className="card-body items-center text-center text-gray-500">
         <h2 className="card-title">{name}</h2>
         <p>
           <a

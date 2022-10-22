@@ -15,6 +15,7 @@ interface NFT {
 }
 
 interface NFTMetadata {
+  isPog: boolean;
   name: string;
   imageUrl: string;
 }
@@ -33,6 +34,10 @@ async function fetchNFTMetadata(nft: NFT): Promise<NFTMetadata> {
   });
 
   return {
+    isPog:
+      metadata?.data?.properties?.creators &&
+      metadata.data.properties.creators[0].address ===
+        'BrtiXxJN5H7zoLyAsucBuymAgpYH8zRcR3NiQuyP9mPL',
     name: metadata.data.name,
     imageUrl: metadata.data.image,
   };
@@ -52,13 +57,14 @@ async function getNFTs({
 
     const pogs: PogNFT[] = [];
     for (let i = 0; i < nftArray.length; i++) {
-      const { name, imageUrl } = await fetchNFTMetadata(nftArray[i]);
-
-      pogs.push({
-        name,
-        imageUrl,
-        mintAddress: nftArray[i].mint,
-      } as PogNFT);
+      const { isPog, name, imageUrl } = await fetchNFTMetadata(nftArray[i]);
+      if (isPog) {
+        pogs.push({
+          name,
+          imageUrl,
+          mintAddress: nftArray[i].mint,
+        } as PogNFT);
+      }
     }
     return pogs;
   } catch (e) {

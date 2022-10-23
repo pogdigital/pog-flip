@@ -7,6 +7,7 @@ Game loop:
 */
 
 const POGFLIP_ESCROW = '2HfWgU9nkwdBLFJ7s1UW4PBwgkgB16h7boXyGKNBZypB';
+const REX_API_BASEURL = 'https://api.r3x.tech';
 
 import * as web3 from '@solana/web3.js';
 import type { WalletAdapterProps } from '@solana/wallet-adapter-base';
@@ -18,7 +19,7 @@ import {
 
 import { PogNFT } from './nft';
 
-export type PogMintAddress = string | null;
+export type PogMintAddress = string;
 
 export enum FlipGameState {
   AwaitPlayerPog,
@@ -147,7 +148,24 @@ export class FlipGame {
     }
   }
 
-  async stepTwoTransferPogmanPog() {}
+  async stepTwoTransferPogmanPog({ playerPog }: { playerPog: PogNFT }) {
+    const mintPublicKey = new web3.PublicKey(playerPog.mintAddress);
+    const to = new web3.PublicKey(POGFLIP_ESCROW);
+    const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
+
+    const result = await fetch(`${REX_API_BASEURL}/nft/transfer/to-escrow`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        network: 'devnet',
+        tokenAddress: toTokenAccount.toString(),
+      }),
+    });
+
+    console.log('RESULT', result);
+  }
 
   async stepThreeResults({
     playerPogMintAddress,

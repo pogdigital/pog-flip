@@ -81,7 +81,7 @@ const Home: NextPage = () => {
         });
       }
 
-      await game.stepTwoTransferPogmanPog();
+      await game.stepTwoTransferPogmanPog({ playerPog });
 
       const result = await game.stepThreeResults({
         playerPogMintAddress: playerPog.mintAddress,

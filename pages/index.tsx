@@ -33,38 +33,70 @@ const Home: NextPage = () => {
   const [playerPog, setPlayerPog] = useState<PogNFT | null>(null);
   const [winningPog, setWinningPog] = useState<string | null>(null);
 
+  async function initGame() {
+    setWinningPog(null);
+    const pog = await game.getPogInProgress({
+      browserStorage: window.sessionStorage,
+    });
+    console.log('POG IN PROGRESS', pog);
+    if (pog) {
+      setGameState(FlipGameState.GameStarted);
+      setPlayerPog(pog);
+    } else {
+      setGameState(FlipGameState.AwaitPlayerPog);
+      setPlayerPog(null);
+    }
+  }
+
   function onSelectPog(pog: PogNFT): void {
     setPlayerPog(pog);
     setGameState(FlipGameState.PogPicked);
   }
 
   useEffect(() => {
-    if (!wallet) {
-      setNfts([]);
-      setPlayerPog(null);
-      setGameState(FlipGameState.AwaitPlayerPog);
+    async function init() {
+      if (!wallet) {
+        await initGame();
+      }
     }
+    init();
   }, [wallet]);
 
   async function onPlayGame() {
     if (!publicKey || !sendTransaction) throw new WalletNotConnectedError();
     if (playerPog?.mintAddress && publicKey) {
       setGameState(FlipGameState.GameStarted);
-      const result = await game.play({
-        connection,
-        publicKey,
-        sendTransaction,
+
+      if (
+        !(await game.getPogInProgress({
+          browserStorage: window.sessionStorage,
+        }))
+      ) {
+        await game.stepOneTransferPlayerPog({
+          connection,
+          publicKey,
+          sendTransaction,
+          playerPog,
+          browserStorage: window.sessionStorage,
+        });
+      }
+
+      await game.stepTwoTransferPogmanPog();
+
+      const result = await game.stepThreeResults({
         playerPogMintAddress: playerPog.mintAddress,
       });
       setWinningPog(result.winningPogMintAddress);
+
+      // TODO: If game is over then clear it!
+      //game.clearPogInProgress()
+
       setGameState(FlipGameState.GameFinished);
     }
   }
 
   async function onRestartGame() {
-    setGameState(FlipGameState.AwaitPlayerPog);
-    setPlayerPog(null);
-    setWinningPog(null);
+    await initGame();
   }
 
   useEffect(() => {

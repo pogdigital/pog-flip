@@ -9,14 +9,14 @@ Game loop:
 const POGFLIP_ESCROW = '2HfWgU9nkwdBLFJ7s1UW4PBwgkgB16h7boXyGKNBZypB';
 
 import * as web3 from '@solana/web3.js';
-
 import type { WalletAdapterProps } from '@solana/wallet-adapter-base';
-
 import {
   getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
   createTransferCheckedInstruction,
 } from '@solana/spl-token';
+
+import { PogNFT } from './nft';
 
 export type PogMintAddress = string | null;
 
@@ -27,11 +27,12 @@ export enum FlipGameState {
   GameFinished,
 }
 
-export interface PogFlipParams {
+export interface PogFlipStepOneParams {
   connection: web3.Connection;
   publicKey: web3.PublicKey;
   sendTransaction: WalletAdapterProps['sendTransaction'];
-  playerPogMintAddress: PogMintAddress;
+  playerPog: PogNFT;
+  browserStorage: Storage;
 }
 
 export interface PogFlipResults {
@@ -39,27 +40,54 @@ export interface PogFlipResults {
 }
 
 export class FlipGame {
-  // play game
-  async play({
+  async getPogInProgress({
+    browserStorage,
+  }: {
+    browserStorage: Storage;
+  }): Promise<PogNFT | null> {
+    const playerPogGameInProgress = browserStorage.getItem('playerPog');
+    if (playerPogGameInProgress) {
+      return JSON.parse(playerPogGameInProgress);
+    }
+    return null;
+  }
+
+  async setPogInProgress({
+    browserStorage,
+    playerPog,
+  }: {
+    browserStorage: Storage;
+    playerPog: PogNFT;
+  }): Promise<void> {
+    if (playerPog) {
+      browserStorage.setItem('playerPog', JSON.stringify(playerPog));
+    } else {
+      throw new Error('Missing playerPog');
+    }
+  }
+
+  async clearPogInProgress({
+    browserStorage,
+  }: {
+    browserStorage: Storage;
+  }): Promise<void> {
+    browserStorage.removeItem('playerPog');
+  }
+
+  async stepOneTransferPlayerPog({
     connection,
     publicKey,
     sendTransaction,
-    playerPogMintAddress,
-  }: PogFlipParams): Promise<PogFlipResults> {
+    playerPog,
+    browserStorage,
+  }: PogFlipStepOneParams): Promise<void> {
     await this.playerPogToEscrow({
       connection,
       publicKey,
       sendTransaction,
-      playerPogMintAddress,
+      playerPog,
+      browserStorage,
     });
-
-    // mock game logic - flip and then return winning mintAddress or null for a loss
-    const win = Math.random() < 0.5;
-    return win
-      ? {
-          winningPogMintAddress: '5cWmE1KMdGt5tSj4jadieUKqJRFm25zKxYMAZ8MzV5a7',
-        }
-      : { winningPogMintAddress: null };
   }
 
   // transfer player Pog into escrow wallet
@@ -67,10 +95,11 @@ export class FlipGame {
     connection,
     publicKey,
     sendTransaction,
-    playerPogMintAddress,
-  }: PogFlipParams): Promise<void> {
-    if (playerPogMintAddress) {
-      const mintPublicKey = new web3.PublicKey(playerPogMintAddress);
+    playerPog,
+    browserStorage,
+  }: PogFlipStepOneParams): Promise<void> {
+    if (playerPog && playerPog.mintAddress) {
+      const mintPublicKey = new web3.PublicKey(playerPog.mintAddress);
       const to = new web3.PublicKey(POGFLIP_ESCROW);
 
       const fromTokenAccount = await getAssociatedTokenAddress(
@@ -106,15 +135,27 @@ export class FlipGame {
         )
       );
 
-      // disabled until pogflip API is ready
+      const result = await sendTransaction(tx, connection, {
+        preflightCommitment: 'confirmed',
+      });
+      console.log(
+        'result of createAssociatedTokenAccountInstruction and createTransferCheckedInstruction transaction',
+        result
+      );
 
-      // const result = await sendTransaction(tx, connection, {
-      //   preflightCommitment: 'confirmed',
-      // });
-      // console.log(
-      //   'result of createAssociatedTokenAccountInstruction and createTransferCheckedInstruction transaction',
-      //   result
-      // );
+      await this.setPogInProgress({ browserStorage, playerPog });
     }
+  }
+
+  async stepTwoTransferPogmanPog() {}
+
+  async stepThreeResults({
+    playerPogMintAddress,
+  }: {
+    playerPogMintAddress: PogMintAddress;
+  }): Promise<PogFlipResults> {
+    return {
+      winningPogMintAddress: null,
+    };
   }
 }

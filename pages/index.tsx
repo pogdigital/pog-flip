@@ -86,12 +86,11 @@ const Home: NextPage = () => {
       const result = await game.stepThreeResults({
         playerPogMintAddress: playerPog.mintAddress,
       });
-      setWinningPog(result.winningPogMintAddress);
 
-      // TODO: If game is over then clear it!
-      //game.clearPogInProgress()
-
-      setGameState(FlipGameState.GameFinished);
+      // TODO: When game is officially over
+      // setWinningPog(result.winningPogMintAddress);
+      // setGameState(FlipGameState.GameFinished);
+      // game.clearPogInProgress()
     }
   }
 

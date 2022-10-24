@@ -153,7 +153,7 @@ export class FlipGame {
     const to = new web3.PublicKey(POGFLIP_ESCROW);
     const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
 
-    const result = await fetch(`${REX_API_BASEURL}/nft/transfer/to-escrow`, {
+    const result = await fetch(`${REX_API_BASEURL}/pogs/transfer-pog-to-escrow`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

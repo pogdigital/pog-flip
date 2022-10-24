@@ -148,21 +148,30 @@ export class FlipGame {
     }
   }
 
-  async stepTwoTransferPogmanPog({ playerPog }: { playerPog: PogNFT }) {
+  async stepTwoTransferPogmanPog({
+    playerPog,
+    publicKey,
+  }: {
+    playerPog: PogNFT;
+    publicKey: web3.PublicKey;
+  }) {
     const mintPublicKey = new web3.PublicKey(playerPog.mintAddress);
     const to = new web3.PublicKey(POGFLIP_ESCROW);
     const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
 
-    const result = await fetch(`${REX_API_BASEURL}/pogs/transfer-pog-to-escrow`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        network: 'devnet',
-        tokenAddress: toTokenAccount.toString(),
-      }),
-    });
+    const result = await fetch(
+      `${REX_API_BASEURL}/pogs/transfer-pog-to-escrow`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userwalletaddress: publicKey.toString(),
+          usertokenaddress: toTokenAccount.toString(),
+        }),
+      }
+    );
 
     console.log('RESULT', result);
   }

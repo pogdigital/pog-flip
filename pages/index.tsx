@@ -36,7 +36,7 @@ const Home: NextPage = () => {
   async function initGame() {
     setWinningPog(null);
     const pog = await game.getPogInProgress({
-      browserStorage: window.sessionStorage,
+      browserStorage: window.localStorage,
     });
     console.log('POG IN PROGRESS', pog);
     if (pog) {
@@ -69,7 +69,7 @@ const Home: NextPage = () => {
 
       if (
         !(await game.getPogInProgress({
-          browserStorage: window.sessionStorage,
+          browserStorage: window.localStorage,
         }))
       ) {
         await game.stepOneTransferPlayerPog({
@@ -77,11 +77,11 @@ const Home: NextPage = () => {
           publicKey,
           sendTransaction,
           playerPog,
-          browserStorage: window.sessionStorage,
+          browserStorage: window.localStorage,
         });
       }
 
-      await game.stepTwoTransferPogmanPog({ playerPog });
+      await game.stepTwoTransferPogmanPog({ playerPog, publicKey });
 
       const result = await game.stepThreeResults({
         playerPogMintAddress: playerPog.mintAddress,

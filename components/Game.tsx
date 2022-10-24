@@ -60,8 +60,8 @@ export function Game({
             Please choose a Pog from your wallet to play with.
           </div>
         )}
-        {gameState == FlipGameState.PogPicked ||
-          (gameState == FlipGameState.GameStarted && (
+        {(gameState == FlipGameState.PogPicked ||
+          gameState == FlipGameState.GameStarted) && (
             <div className="mt-8">
               {playerPog && (
                 <PogView
@@ -71,7 +71,7 @@ export function Game({
                 />
               )}
             </div>
-          ))}
+          )}
       </div>
       {gameState == FlipGameState.PogPicked && (
         <div className="text-center">
@@ -98,7 +98,7 @@ export function Game({
         </div>
       )}
 
-      {FlipGameState.GameStarted && (
+      {gameState == FlipGameState.GameStarted && (
         <div className="text-center">
           <div className="flex flex-col h-full justify-center">
             <div>

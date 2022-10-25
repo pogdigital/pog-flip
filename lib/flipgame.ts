@@ -10,6 +10,7 @@ const POGFLIP_ESCROW = '2HfWgU9nkwdBLFJ7s1UW4PBwgkgB16h7boXyGKNBZypB';
 const REX_API_BASEURL = 'https://api.r3x.tech';
 
 import * as web3 from '@solana/web3.js';
+import axios from 'axios';
 import type { WalletAdapterProps } from '@solana/wallet-adapter-base';
 import {
   getAssociatedTokenAddress,
@@ -159,19 +160,22 @@ export class FlipGame {
     const to = new web3.PublicKey(POGFLIP_ESCROW);
     const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
 
-    const result = await fetch(
-      `${REX_API_BASEURL}/pogs/transfer-pog-to-escrow`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userwalletaddress: publicKey.toString(),
-          usertokenaddress: toTokenAccount.toString(),
-        }),
-      }
-    );
+    console.log({
+      userwalletaddress: publicKey.toString(),
+      usertokenaddress: toTokenAccount.toString(),
+    });
+
+    const result = await axios({
+      method: 'post',
+      url: `${REX_API_BASEURL}/pogs/transfer-pog-to-escrow`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        userwalletaddress: publicKey.toString(),
+        usertokenaddress: toTokenAccount.toString(),
+      },
+    });
 
     console.log('RESULT', result);
   }

@@ -33,6 +33,8 @@ const Home: NextPage = () => {
   const [playerPog, setPlayerPog] = useState<PogNFT | null>(null);
   const [winningPog, setWinningPog] = useState<string | null>(null);
 
+  const [isFlipping, setIsFlipping] = useState<boolean>(false);
+
   async function initGame() {
     setWinningPog(null);
     const pog = await game.getPogInProgress({
@@ -66,31 +68,44 @@ const Home: NextPage = () => {
     if (!publicKey || !sendTransaction) throw new WalletNotConnectedError();
     if (playerPog?.mintAddress && publicKey) {
       setGameState(FlipGameState.GameStarted);
+      setIsFlipping(true);
 
-      if (
-        !(await game.getPogInProgress({
-          browserStorage: window.localStorage,
-        }))
-      ) {
-        await game.stepOneTransferPlayerPog({
-          connection,
-          publicKey,
-          sendTransaction,
+      try {
+        if (
+          !(await game.getPogInProgress({
+            browserStorage: window.localStorage,
+          }))
+        ) {
+          await game.stepOneTransferPlayerPog({
+            connection,
+            publicKey,
+            sendTransaction,
+            playerPog,
+            browserStorage: window.localStorage,
+          });
+        }
+
+        const { pogmanMintAddress } = await game.stepTwoTransferPogmanPog({
           playerPog,
-          browserStorage: window.localStorage,
+          publicKey,
         });
+
+        const result = await game.stepThreeResults({
+          pogmanMintAddress,
+          publicKey,
+        });
+
+        console.log('Final result', result);
+
+        // TODO: When game is officially over
+        // setWinningPog(result.winningPogMintAddress);
+        // setGameState(FlipGameState.GameFinished);
+        setIsFlipping(false);
+        // game.clearPogInProgress()
+      } catch (e) {
+        setIsFlipping(false);
+        console.error('ERROR WHILE PLAYING GAME', e);
       }
-
-      await game.stepTwoTransferPogmanPog({ playerPog, publicKey });
-
-      const result = await game.stepThreeResults({
-        playerPogMintAddress: playerPog.mintAddress,
-      });
-
-      // TODO: When game is officially over
-      // setWinningPog(result.winningPogMintAddress);
-      // setGameState(FlipGameState.GameFinished);
-      // game.clearPogInProgress()
     }
   }
 
@@ -152,6 +167,7 @@ const Home: NextPage = () => {
             winningPog={winningPog}
             onPlayGame={onPlayGame}
             onRestartGame={onRestartGame}
+            isFlipping={isFlipping}
           />
         )}
 

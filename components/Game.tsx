@@ -8,12 +8,14 @@ export function Game({
   winningPog,
   onPlayGame,
   onRestartGame,
+  isFlipping,
 }: {
   gameState: FlipGameState;
   playerPog: PogNFT | null;
   winningPog: PogMintAddress | null;
   onPlayGame: () => {};
   onRestartGame: () => {};
+  isFlipping: boolean;
 }) {
   return (
     <div className="flex flex-col w-full sm:flex-row">
@@ -79,6 +81,7 @@ export function Game({
             <div>
               <button
                 className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10"
+                disabled={isFlipping}
                 onClick={() => {
                   onPlayGame();
                 }}
@@ -104,6 +107,7 @@ export function Game({
             <div>
               <button
                 className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10"
+                disabled={isFlipping}
                 onClick={() => {
                   onPlayGame();
                 }}

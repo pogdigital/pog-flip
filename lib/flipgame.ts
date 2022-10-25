@@ -37,6 +37,10 @@ export interface PogFlipStepOneParams {
   browserStorage: Storage;
 }
 
+export interface Step2Results {
+  pogmanMintAddress: PogMintAddress;
+}
+
 export interface PogFlipResults {
   winningPogMintAddress: PogMintAddress | null;
 }
@@ -155,7 +159,7 @@ export class FlipGame {
   }: {
     playerPog: PogNFT;
     publicKey: web3.PublicKey;
-  }) {
+  }): Promise<Step2Results> {
     const mintPublicKey = new web3.PublicKey(playerPog.mintAddress);
     const to = new web3.PublicKey(POGFLIP_ESCROW);
     const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
@@ -177,14 +181,50 @@ export class FlipGame {
       },
     });
 
-    console.log('RESULT', result);
+    console.log('Step 2 RESULT', result);
+
+    const pogmanMintAddress = result.data.pogtokenaddress;
+    console.log(`Pogman's Pog moved into escrow: ${pogmanMintAddress}`);
+    return { pogmanMintAddress };
   }
 
   async stepThreeResults({
-    playerPogMintAddress,
+    pogmanMintAddress,
+    publicKey,
   }: {
-    playerPogMintAddress: PogMintAddress;
+    pogmanMintAddress: PogMintAddress;
+    publicKey: web3.PublicKey;
   }): Promise<PogFlipResults> {
+    const mintPublicKey = new web3.PublicKey(pogmanMintAddress);
+    const to = publicKey;
+    const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, to);
+
+    console.log({
+      userwalletaddress: publicKey.toString(),
+      usertokenaddress: toTokenAccount.toString(),
+    });
+
+    const result = await axios({
+      method: 'post',
+      url: `${REX_API_BASEURL}/pogs/transfer-pog-from-escrow`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        userwalletaddress: publicKey.toString(),
+        usertokenaddress: toTokenAccount.toString(),
+        pogtokenaddress: pogmanMintAddress,
+      },
+    });
+
+    console.log('Step 3 RESULT', result);
+
+    if (result.data) {
+      console.log('WINNER');
+    } else {
+      console.log('LOSER');
+    }
+
     return {
       winningPogMintAddress: null,
     };

@@ -206,7 +206,7 @@ export class FlipGame {
 
     const result = await axios({
       method: 'post',
-      url: `${REX_API_BASEURL}/pogs/transfer-pog-from-escrow`,
+      url: `${REX_API_BASEURL}/pogs/transfer-from-escrow`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -219,14 +219,25 @@ export class FlipGame {
 
     console.log('Step 3 RESULT', result);
 
-    if (result.data) {
+    let winningPogMintAddress: string | null = null;
+
+    interface OutcomeResult {
+      outcome: boolean;
+      usertokenaddress: string;
+      tx1: string;
+    }
+
+    const data = result.data as OutcomeResult;
+
+    if (data.outcome) {
       console.log('WINNER');
+      winningPogMintAddress = data.usertokenaddress;
     } else {
       console.log('LOSER');
     }
 
     return {
-      winningPogMintAddress: null,
+      winningPogMintAddress,
     };
   }
 }

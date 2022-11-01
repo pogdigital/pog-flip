@@ -33,38 +33,84 @@ const Home: NextPage = () => {
   const [playerPog, setPlayerPog] = useState<PogNFT | null>(null);
   const [winningPog, setWinningPog] = useState<string | null>(null);
 
+  const [isFlipping, setIsFlipping] = useState<boolean>(false);
+
+  async function initGame() {
+    setWinningPog(null);
+    const pog = await game.getPogInProgress({
+      browserStorage: window.localStorage,
+    });
+    console.log('POG IN PROGRESS', pog);
+    if (pog) {
+      setGameState(FlipGameState.GameStarted);
+      setPlayerPog(pog);
+    } else {
+      setGameState(FlipGameState.AwaitPlayerPog);
+      setPlayerPog(null);
+    }
+  }
+
   function onSelectPog(pog: PogNFT): void {
     setPlayerPog(pog);
     setGameState(FlipGameState.PogPicked);
   }
 
   useEffect(() => {
-    if (!wallet) {
-      setNfts([]);
-      setPlayerPog(null);
-      setGameState(FlipGameState.AwaitPlayerPog);
+    async function init() {
+      if (!wallet) {
+        await initGame();
+      }
     }
+    init();
   }, [wallet]);
 
   async function onPlayGame() {
     if (!publicKey || !sendTransaction) throw new WalletNotConnectedError();
     if (playerPog?.mintAddress && publicKey) {
       setGameState(FlipGameState.GameStarted);
-      const result = await game.play({
-        connection,
-        publicKey,
-        sendTransaction,
-        playerPogMintAddress: playerPog.mintAddress,
-      });
-      setWinningPog(result.winningPogMintAddress);
-      setGameState(FlipGameState.GameFinished);
+      setIsFlipping(true);
+
+      try {
+        if (
+          !(await game.getPogInProgress({
+            browserStorage: window.localStorage,
+          }))
+        ) {
+          await game.stepOneTransferPlayerPog({
+            connection,
+            publicKey,
+            sendTransaction,
+            playerPog,
+            browserStorage: window.localStorage,
+          });
+        }
+
+        const { pogmanMintAddress } = await game.stepTwoTransferPogmanPog({
+          playerPog,
+          publicKey,
+        });
+
+        const result = await game.stepThreeResults({
+          pogmanMintAddress,
+          publicKey,
+        });
+
+        console.log('Final result', result);
+
+        // TODO: When game is officially over
+        // setWinningPog(result.winningPogMintAddress);
+        // setGameState(FlipGameState.GameFinished);
+        setIsFlipping(false);
+        // game.clearPogInProgress()
+      } catch (e) {
+        setIsFlipping(false);
+        console.error('ERROR WHILE PLAYING GAME', e);
+      }
     }
   }
 
   async function onRestartGame() {
-    setGameState(FlipGameState.AwaitPlayerPog);
-    setPlayerPog(null);
-    setWinningPog(null);
+    await initGame();
   }
 
   useEffect(() => {
@@ -121,6 +167,7 @@ const Home: NextPage = () => {
             winningPog={winningPog}
             onPlayGame={onPlayGame}
             onRestartGame={onRestartGame}
+            isFlipping={isFlipping}
           />
         )}
 

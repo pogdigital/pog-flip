@@ -8,12 +8,14 @@ export function Game({
   winningPog,
   onPlayGame,
   onRestartGame,
+  isFlipping,
 }: {
   gameState: FlipGameState;
   playerPog: PogNFT | null;
   winningPog: PogMintAddress | null;
   onPlayGame: () => {};
   onRestartGame: () => {};
+  isFlipping: boolean;
 }) {
   return (
     <div className="flex flex-col w-full sm:flex-row">
@@ -60,25 +62,26 @@ export function Game({
             Please choose a Pog from your wallet to play with.
           </div>
         )}
-        {gameState == FlipGameState.PogPicked && (
-          <div className="mt-8">
-            {playerPog && (
-              <PogView
-                name={playerPog.name}
-                mintAddress={playerPog.mintAddress}
-                imageUrl={playerPog.imageUrl}
-              />
-            )}
-          </div>
-        )}
+        {(gameState == FlipGameState.PogPicked ||
+          gameState == FlipGameState.GameStarted) && (
+            <div className="mt-8">
+              {playerPog && (
+                <PogView
+                  name={playerPog.name}
+                  mintAddress={playerPog.mintAddress}
+                  imageUrl={playerPog.imageUrl}
+                />
+              )}
+            </div>
+          )}
       </div>
       {gameState == FlipGameState.PogPicked && (
         <div className="text-center">
           <div className="flex flex-col h-full justify-center">
             <div>
               <button
-                disabled={gameState !== FlipGameState.PogPicked}
                 className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10"
+                disabled={isFlipping}
                 onClick={() => {
                   onPlayGame();
                 }}
@@ -86,10 +89,38 @@ export function Game({
                 FLIP!
               </button>
               <div className="text-xl pl-5 pr-5 pb-10">
-                You have a 50% change of losing your Pog, or earning one from
-                Pogman!
+                You have a 50% chance of losing your Pog and 50% of earning one
+                from Pogman!
               </div>
-              <div>Pressing Flip will transfer your Pog NFT out of your wallet to start the game.</div>
+              <div>
+                Pressing Flip will transfer your Pog NFT out of your wallet to
+                start the game.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {gameState == FlipGameState.GameStarted && (
+        <div className="text-center">
+          <div className="flex flex-col h-full justify-center">
+            <div>
+              <button
+                className="btn btn-lg bg-primary hover:bg-primary-focus text-primary-content border-primary-focus border-4 h-36 w-36 rounded-full m-10"
+                disabled={isFlipping}
+                onClick={() => {
+                  onPlayGame();
+                }}
+              >
+                FLIP!
+              </button>
+              <div className="text-xl pl-5 pr-5 pb-10">
+                You have a 50% chance of losing your Pog and 50% of earning one
+                from Pogman!
+              </div>
+              <div>
+                Your Pog has been moved out of your wallet and is now in escrow.
+              </div>
             </div>
           </div>
         </div>

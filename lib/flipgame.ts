@@ -206,7 +206,7 @@ export class FlipGame {
 
     const result = await axios({
       method: 'post',
-      url: `${REX_API_BASEURL}/pogs/transfer-from-escrow`,
+      url: `${REX_API_BASEURL}/pogs/transfer-pog-from-escrow`,
       headers: {
         'Content-Type': 'application/json',
       },
